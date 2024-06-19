@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+    <title th:text="${title} ?: 'Product Details'">Product Details</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+
+<section layout:fragment="content">
+    <h2>Product Details</h2>
+
+    <!-- Role Admin & Employee -->
+    <div sec:authorize="hasAuthority('ADMIN') or hasAuthority('EMPLOYEE')">
+        <div>
+            <h4>Name: <span th:text="${product.name}"></span></h4>
+            <h4>Price: <span th:text="${product.price}"></span></h4>
+            <h4>Description: <span th:text="${product.description}"></span></h4>
+
+            <div class="pe-5">
+                <img class="rounded" th:src="@{/images/{imageName}(imageName=${product.imageProduct})}" alt="Product Image" style="min-height: 200px; max-height: 400px; width: auto;" />
+            </div>
+        </div>
+        <a th:href="@{/products}">Cancel</a>
+    </div>
+
+    <!-- Role Customer & Visitor -->
+    <div sec:authorize="isAnonymous() or hasAuthority('USER')">
+        <div class="d-flex flex-row gap-lg-5 p-5">
+            <div class="pe-5">
+                <img class="rounded" th:src="@{/images/{imageName}(imageName=${product.imageProduct})}" alt="Product Image" style="min-height: 200px; max-height: 400px; width: auto;" />
+            </div>
+            <div class="justify-content-center align-items-between">
+                <h3 th:text="${product.name}"></h3>
+                <h4 class="text-info" th:text="${product.price}"></h4>
+
+                <form th:action="@{/cart/add}" method="post">
+                    <input type="number" name="quantity" id="quantityInput" value="1" />
+                    <input type="hidden" th:value="${product.id}" name="productId"/>
+                    <div class="d-flex flex-row gap-lg-5 pt-lg-5">
+                        <button type="submit" class="btn btn-outline-dark">
+                            <i class="bi-cart-fill me-1"></i> Add to Cart
+                        </button>
+                        <a th:href="@{/products}">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

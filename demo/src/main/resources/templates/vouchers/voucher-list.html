@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title th:text="${title} ?: 'Vouchers'">Vouchers</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<section layout:fragment="content">
+    <h1>Vouchers List</h1>
+    <div>
+        <a th:href="@{/vouchers/add}" class="btn btn-primary mb-3">Add New Voucher</a>
+    </div>
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Category</th>
+            <th>Code</th>
+            <th>Amount</th>
+            <th>Discount</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="voucher : ${vouchers}">
+            <td th:text="${voucher.id}"></td>
+            <td th:text="${voucher.category.name}"></td>
+            <td th:text="${voucher.code}"></td>
+            <td th:text="${voucher.amount}"></td>
+            <td th:text="${voucher.discount}"></td>
+            <td th:text="${#temporals.format(voucher.startDate, 'dd-MM-yyyy HH:mm')}"></td>
+            <td th:text="${#temporals.format(voucher.endDate, 'dd-MM-yyyy HH:mm')}"></td>
+            <td th:text="${voucher.getStatus()}"></td>
+            <td>
+                <div class="btn-group">
+                    <!-- Edit and Delete buttons (shown for ADMIN role) -->
+                    <div sec:authorize="hasAuthority('ADMIN')">
+                        <a th:href="@{/vouchers/edit/{id}(id=${voucher.id})}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <a th:href="@{/vouchers/delete/{id}(id=${voucher.id})}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>
