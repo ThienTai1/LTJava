@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -17,11 +18,11 @@ import java.util.List;
 @Transactional
 public class OrderService {
     @Autowired
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
     @Autowired
-    private OrderDetailRepository orderDetailRepository;
+    private final OrderDetailRepository orderDetailRepository;
     @Autowired
-    private CartService cartService;  // Assuming you have a CartService
+    private final CartService cartService;
 
     @Transactional
     public Order createOrder(String customerName, List<CartItem> cartItems) {
@@ -36,9 +37,24 @@ public class OrderService {
             detail.setQuantity(item.getQuantity());
             orderDetailRepository.save(detail);
         }
-        // Optionally clear the cart after order placement
         cartService.clearCart();
-
         return order;
+    }
+
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
+    }
+
+    public BigDecimal calculateTotalRevenue() {
+        List<Order> orders = orderRepository.findAll();
+        BigDecimal totalRevenue = BigDecimal.ZERO;
+        for (Order order : orders) {
+            for (OrderDetails details : order.getOrderDetails()) {
+                BigDecimal price = BigDecimal.valueOf(details.getProduct().getPrice());
+                int quantity = details.getQuantity();
+                totalRevenue = totalRevenue.add(price.multiply(BigDecimal.valueOf(quantity)));
+            }
+        }
+        return totalRevenue;
     }
 }

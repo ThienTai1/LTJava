@@ -30,7 +30,7 @@
                             <a class="nav-link text-white active" aria-current="page" href="/">Customer</a>
                         </li>
                         <li class="nav-item" sec:authorize="hasAuthority('ADMIN')">
-                            <a class="nav-link text-white active" aria-current="page" href="/">Revenue Statistics</a>
+                            <a class="nav-link text-white active" aria-current="page" href="/order/revenue">Revenue Statistics</a>
                         </li>
                         <li class="nav-item" sec:authorize="hasAuthority('ADMIN')">
                             <a class="nav-link text-white active" aria-current="page" href="/vouchers">Vouchers</a>
@@ -43,8 +43,8 @@
 <!--                            <a th:href="@{/categories/add}" class="nav-link text-white">Add New Category</a>-->
 <!--                        </li>-->
                     </ul>
-                    <form class="d-flex px-5" th:action="@{/products}" method="get" style="width: 400px;">
-                        <input id="txtSearchPlaceholder" class="form-control me-2" type="search" style="position: absolute; background-color: transparent; color: #ccc; z-index: -1; width: 100%;" disabled />
+                    <form class="d-flex px-5" th:action="@{/products}" method="get" >
+                        <input id="txtSearchPlaceholder" class=" me-2" type="search" style="position: absolute; background-color: transparent; color: #ccc; z-index: -1;" disabled />
                         <input id="txtSearch" class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="searchString">
                         <button class="btn btn-outline-light" type="submit">
                             <i class="bi bi-search"></i>

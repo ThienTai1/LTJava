@@ -45,7 +45,7 @@
                                 </div>
                             </div>
                             <!-- Add to Cart form (shown for USER role) -->
-                            <form th:action="@{/cart/add}" method="post">
+                            <form th:action="@{/cart/add}" method="post" sec:authorize="hasAuthority('USER')">
                                 <input type="number" name="quantity" id="quantityInput" value="1" />
                                 <input type="hidden" th:value="${product.id}" name="productId"/>
                                 <div class="d-flex flex-row gap-lg-5 pt-lg-5">
