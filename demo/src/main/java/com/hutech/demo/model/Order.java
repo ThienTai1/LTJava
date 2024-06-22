@@ -14,7 +14,13 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    private double price;
+    private String address;
+    private String number;
+    private String email;
+    private String note;
+    private  String thanhtoan;
+    @JoinColumn(name = "user_id")
     private String customerName;
 
     @OneToMany(mappedBy = "order")

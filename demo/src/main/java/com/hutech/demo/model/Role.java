@@ -1,4 +1,6 @@
 package com.hutech.demo.model;
+
+import com.hutech.demo.RoleName;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -24,10 +26,9 @@ public class Role implements GrantedAuthority {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Name is required")
+    @Enumerated(EnumType.STRING)
     @Column(name = "name", length = 50, nullable = false)
-    @Size(max = 50, message = "Name must be less than 50 characters")
-    private String name;
+    private RoleName roleName; // Use RoleName enum instead of Role enum
 
     @Size(max = 250, message = "Description must be less than 250 characters")
     @Column(name = "description", length = 250)
@@ -39,20 +40,19 @@ public class Role implements GrantedAuthority {
 
     @Override
     public String getAuthority() {
-        return name;
+        return roleName.name(); // Return the enum constant name as the authority
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Role role = (Role) o;
-        return getId() != null && Objects.equals(getId(), role.getId());
+        return Objects.equals(id, role.id);
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return Objects.hash(id);
     }
 }
-

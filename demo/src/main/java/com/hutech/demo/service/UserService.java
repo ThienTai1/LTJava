@@ -1,11 +1,15 @@
 package com.hutech.demo.service;
-import com.hutech.demo.Role;
+
+import com.hutech.demo.RoleName;
+import com.hutech.demo.model.Role;
 import com.hutech.demo.model.User;
 import com.hutech.demo.repository.IRoleRepository;
 import com.hutech.demo.repository.IUserRepository;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -35,7 +39,9 @@ public class UserService implements UserDetailsService {
     public void setDefaultRole(String username) {
         userRepository.findByUsername(username).ifPresentOrElse(
                 user -> {
-                    user.getRoles().add(roleRepository.findRoleById(Role.USER.value));
+                    Role userRole = roleRepository.findByRoleName(RoleName.USER)
+                            .orElseThrow(() -> new RuntimeException("Role not found"));
+                    user.getRoles().add(userRole);
                     userRepository.save(user);
                 },
                 () -> { throw new UsernameNotFoundException("User not found"); }
@@ -61,6 +67,28 @@ public class UserService implements UserDetailsService {
     // Tìm kiếm người dùng dựa trên tên đăng nhập.
     public Optional<User> findByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username);
+    }
+    public String getUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            return userDetails.getUsername();
+        } else {
+            return "User ID not found";
+        }
+    }
+    public String getEmailUser(){
+        Optional<User> user = findByUsername(getUserId());
+        return   user.get().getEmail();
+
+    }
+    public String getNumberUser(){
+        Optional<User> user = findByUsername(getUserId());
+        return user.get().getPhone();
+    }
+    public String getNameUser(){
+        Optional<User> user = findByUsername(getUserId());
+        return user.get().getUsername();
     }
 }
 
