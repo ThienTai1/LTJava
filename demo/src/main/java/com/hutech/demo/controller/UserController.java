@@ -49,4 +49,9 @@ public class UserController {
         userService.setDefaultRole(user.getUsername()); // Gán vai trò mặc định cho người dùng
         return "redirect:/login"; // Chuyển hướng người dùng tới trang "login"
     }
+    @GetMapping("/customers")
+    public String listUsers(Model model) {
+        model.addAttribute("users",userService.findAll());
+        return "customers/customer-list";
+    }
 }
