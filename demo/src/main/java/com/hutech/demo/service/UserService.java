@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -47,7 +48,9 @@ public class UserService implements UserDetailsService {
                 () -> { throw new UsernameNotFoundException("User not found"); }
         );
     }
-
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
     // Tải thông tin chi tiết người dùng để xác thực.
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
