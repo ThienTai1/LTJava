@@ -4,9 +4,11 @@ import com.hutech.demo.Config.VNPayConfig;
 import com.hutech.demo.model.CartItem;
 import com.hutech.demo.model.Order;
 import com.hutech.demo.model.OrderDetails;
+import com.hutech.demo.model.Product;
 import com.hutech.demo.repository.IUserRepository;
 import com.hutech.demo.repository.OrderDetailRepository;
 import com.hutech.demo.repository.OrderRepository;
+import com.hutech.demo.repository.ProductRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletRequest;
@@ -49,10 +51,11 @@ public class OrderService {
     private EmailService emailService;
     @Autowired
     private UserService userService;
-
+    @Autowired
+    private ProductRepository productRepository;
     @Transactional
     public Order createOrder( List<CartItem> cartItems, String note, String address,
-                              String number, String email, String thanhtoan, String customerName) {
+                              String number, String email, String thanhtoan, String name) {
         String sp = "";
         Order order = new Order();
         order.setNote(note);
@@ -60,18 +63,25 @@ public class OrderService {
         order.setEmail(email);
         order.setThanhtoan(thanhtoan);
         order.setAddress(address);
-        order.setCustomerName(customerName);
+        order.setName(name);
         double total = 0;
         for (CartItem item : cartItems) {
+            Product product = item.getProduct();
+            int newStock = product.getQuantity() - item.getQuantity();
+            if (newStock < 0) {
+                throw new IllegalArgumentException("Not enough stock for product: " + product.getId());
+            }
+            product.setQuantity(newStock);
+            productRepository.save(product);
             OrderDetails detail = new OrderDetails();
             detail.setOrder(order);
-            // detail.setProduct(item.getProduct());
+            detail.setProduct(item.getProduct());
             detail.setQuantity(item.getQuantity());
-            detail.setCustomerName(item.getProduct().getName());
+            detail.setProductName(item.getProduct().getName());
             detail.setPrice(item.getProduct().getPrice());
             total += item.getProduct().getPrice()*item.getQuantity();
             sp +="<tr";
-            sp +="<td> "+detail.getCustomerName() + "</td>";
+            sp +="<td> "+detail.getProductName() + "</td>";
             sp +="<td> "+ detail.getQuantity()+ "</td>";
             sp +="<td> "+detail.getPrice() + "</td>";
 
@@ -204,8 +214,8 @@ public class OrderService {
         return orderRepository.findById(id);
     }
 
-    public List<Order> findOrdersByName(String customerName) {
-        return orderRepository.findByCustomerName(customerName);
+    public List<Order> findOrdersByName(String name) {
+        return orderRepository.findByName(name);
     }
 
     public List<Order> getAllOrders() {

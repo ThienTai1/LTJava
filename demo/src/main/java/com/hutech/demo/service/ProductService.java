@@ -36,6 +36,7 @@ public class ProductService {
                 .orElseThrow(() -> new IllegalStateException("Product with ID " + product.getId() + " does not exist."));
         existingProduct.setName(product.getName());
         existingProduct.setPrice(product.getPrice());
+        existingProduct.setQuantity(product.getQuantity());
         existingProduct.setDescription(product.getDescription());
         existingProduct.setCategory(product.getCategory());
         existingProduct.setImageProduct(product.getImageProduct());

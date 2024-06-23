@@ -1,6 +1,7 @@
 package com.hutech.demo.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 
 @Setter
@@ -16,6 +17,8 @@ public class Product {
 
     private String name;
     private double price;
+    @Min(0)
+    private int quantity;
     private String description;
     private String imageProduct;
     @ManyToOne

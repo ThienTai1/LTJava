@@ -21,7 +21,7 @@ public class Order {
     private String note;
     private  String thanhtoan;
     @JoinColumn(name = "user_id")
-    private String customerName;
+    private String name;
 
     @OneToMany(mappedBy = "order")
     private List<OrderDetails> orderDetails;

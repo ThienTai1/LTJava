@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +16,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -55,21 +57,24 @@ public class ProductController {
             model.addAttribute("product", product);
             return "/products/add-product";
         }
-        if (imageProduct != null && imageProduct.getSize() > 0) {
+        if (!imageProduct.isEmpty()) {
             try {
-                File saveFile = new ClassPathResource("static/images").getFile();
-                String newImageFile = UUID.randomUUID() + ".png";
-                Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + newImageFile);
-                Files.copy(imageProduct.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-                product.setImageProduct(newImageFile);
-                System.out.println("Save directory: " + saveFile.getAbsolutePath());
-
-            } catch (Exception e) {
+                String imageName = saveImageStatic(imageProduct);
+                product.setImageProduct("/images/" +imageName);
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         productService.addProduct(product);
         return "redirect:/products";
+    }
+
+    private String saveImageStatic(MultipartFile image) throws IOException {
+        File saveFile = new ClassPathResource("static/images").getFile();
+        String fileName = UUID.randomUUID()+ "." + StringUtils.getFilenameExtension(image.getOriginalFilename());
+        Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + fileName);
+        Files.copy(image.getInputStream(), path);
+        return fileName;
     }
 
     // For editing a product
@@ -92,14 +97,12 @@ public class ProductController {
             product.setId(id); // set id to keep it in the form in case of errors
             return "/products/update-product";
         }
-        if (imageProduct != null && imageProduct.getSize() > 0) {
+        if (!imageProduct.isEmpty()) {
             try {
-                File saveFile = new ClassPathResource("static/images").getFile();
-                String newImageFile = UUID.randomUUID() + ".png";
-                Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + newImageFile);
-                Files.copy(imageProduct.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-                product.setImageProduct(newImageFile);
-            } catch (Exception e) {
+
+                String imageName = saveImageStatic(imageProduct);
+                product.setImageProduct("/images/" + imageName);
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -118,6 +121,10 @@ public class ProductController {
         return "products/display"; // Ensure this matches the actual template name and location
     }
 
-
+    @GetMapping("/delete/{id}")
+    public String deleteProduct(@PathVariable Long id) {
+        productService.deleteProductById(id);
+        return "redirect:/products";
+    }
 
 }
