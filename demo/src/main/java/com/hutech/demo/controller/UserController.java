@@ -1,5 +1,6 @@
 package com.hutech.demo.controller;
 
+import com.hutech.demo.RoleName;
 import com.hutech.demo.model.User;
 import com.hutech.demo.service.UserService;
 import jakarta.validation.Valid;
@@ -51,7 +52,12 @@ public class UserController {
     }
     @GetMapping("/customers")
     public String listUsers(Model model) {
-        model.addAttribute("users",userService.findAll());
+        model.addAttribute("users",userService.findUsersByAuthority(RoleName.USER));
         return "customers/customer-list";
+    }
+    @GetMapping("/employees")
+    public String listEmployee(Model model) {
+        model.addAttribute("users",userService.findUsersByAuthority(RoleName.EMPLOYEE));
+        return "employee/employee-list";
     }
 }
