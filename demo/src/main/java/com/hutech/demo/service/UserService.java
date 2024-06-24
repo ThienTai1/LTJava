@@ -48,8 +48,8 @@ public class UserService implements UserDetailsService {
                 () -> { throw new UsernameNotFoundException("User not found"); }
         );
     }
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<User> findUsersByAuthority(RoleName roleName) {
+        return userRepository.findByAuthorities_RoleName(roleName);
     }
     // Tải thông tin chi tiết người dùng để xác thực.
     @Override
