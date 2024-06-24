@@ -11,6 +11,7 @@
     <table class="table" th:unless="${cartItems.isEmpty()}">
         <thead class="table-light">
         <tr>
+            <th>Product Image</th>
             <th>Product Name</th>
             <th>Quantity</th>
             <th>Action</th>
@@ -18,6 +19,9 @@
         </thead>
         <tbody>
         <tr th:each="item : ${cartItems}">
+            <td>
+                <img th:src="@{${item.product.imageProduct}}" alt="Product Image" class="img-thumbnail" style="width: 100px;">
+            </td>
             <td th:text="${item.product.name}"></td>
             <td th:text="${item.quantity}"></td>
             <td>

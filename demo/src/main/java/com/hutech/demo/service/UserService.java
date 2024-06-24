@@ -68,6 +68,7 @@ public class UserService implements UserDetailsService {
     public Optional<User> findByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username);
     }
+
     public String getUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {

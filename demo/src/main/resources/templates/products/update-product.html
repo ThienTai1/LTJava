@@ -61,7 +61,7 @@
         var quantityValue = parseInt(quantityInput.value);
 
         // Kiểm tra nếu quantity bằng 0
-        if (quantityValue <= 0) {
+        if (quantityValue < 0 || quantityValue === 0) {
             // Hiển thị thông báo lỗi
             document.getElementById("quantityErrorMessage").style.display = "block";
             // Ngăn chặn việc submit form

@@ -33,6 +33,8 @@ public class User implements UserDetails {
     @Column(name = "password", length = 250)
     @NotBlank(message = "Password is required")
     private String password;
+    @Transient
+    private String confirmPassword;
 
     @Column(name = "email", length = 50, unique = true)
     @NotBlank(message = "Email is required")
@@ -47,6 +49,12 @@ public class User implements UserDetails {
 
     @Column(name = "provider", length = 50)
     private String provider;
+
+    @Column(name = "address", length = 100)
+    private String address; // New field for address
+
+    @Column(name = "dob")
+    private String dob;
 
     @ManyToMany(fetch=FetchType.EAGER)
     @JoinTable(name = "user_role",

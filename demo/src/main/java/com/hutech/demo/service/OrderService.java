@@ -20,12 +20,14 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -99,7 +101,7 @@ public class OrderService {
 //            String contentCustomer = new String(Files.readAllBytes(Paths.get(filePath)));
 //            contentCustomer = contentCustomer.replace("{{Madon}}", order.getId().toString());
 //            contentCustomer = contentCustomer.replace("{{SanPham}}", sp.toString());
-//            contentCustomer = contentCustomer.replace("{{TenKhachHang}}", customerName); // Assuming 'name' is the customer's name
+//            contentCustomer = contentCustomer.replace("{{TenKhachHang}}", name); // Assuming 'name' is the customer's name
 //            contentCustomer = contentCustomer.replace("{{TongTien}}", String.valueOf(total));
 //
 //            // emailService.sendEmail(email, contentCustomer);
@@ -109,6 +111,7 @@ public class OrderService {
 //            e.printStackTrace();
 //            throw new RuntimeException("Error reading email template file", e);
 //        }
+        emailService.sendEmail(email, orderRepository.findByName(order.getName()).toString());
         cartService.clearCart();
         return order;
     }

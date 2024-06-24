@@ -26,4 +26,7 @@ public class CartItem {
         this.quantity = quantity;
     }
 
+    public String getImageProduct() {
+        return product.getImageProduct();
+    }
 }
